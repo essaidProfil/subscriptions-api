@@ -1,26 +1,34 @@
 <?php
-
 namespace App\Security;
-
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Entity\User;
 
+/**
+ * Add user roles into the JWT payload.
+ */
 final class JWTCreatedSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @return array<string, string>
+     */
     public static function getSubscribedEvents(): array
     {
-        return [Events::JWT_CREATED => 'onJWTCreated'];
+        return [ Events::JWT_CREATED => 'onJWTCreated' ];
     }
 
-    public function onJWTCreated(JWTCreatedEvent $createdEvent): void
+    /**
+     * @param JWTCreatedEvent $event
+     * @return void
+     */
+    public function onJWTCreated(JWTCreatedEvent $event): void
     {
-        $user = $createdEvent->getUser();
+        $user = $event->getUser();
         if ($user instanceof User) {
-            $data = $createdEvent->getData();
-            $data['roles'] = $user->getRoles();
-            $createdEvent->setData($data);
+            $payload = $event->getData();
+            $payload['roles'] = $user->getRoles();
+            $event->setData($payload);
         }
     }
 }
