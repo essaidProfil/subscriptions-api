@@ -1,22 +1,25 @@
 doctrine:
-  dbal:
-    url: '%env(resolve:DATABASE_URL)%'
-    server_version: '8.0'
-    charset: utf8mb4
-    default_table_options:
-      charset: utf8mb4
-      collate: utf8mb4_unicode_ci
-    types:
-      uuid: Ramsey\Uuid\Doctrine\UuidType
-  orm:
-    auto_generate_proxy_classes: true
-    naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
-    enable_lazy_ghost_objects: true
-    mappings:
-      App:
-        is_bundle: false
-        type: attribute
-        dir: '%kernel.project_dir%/src/Entity'
-        prefix: 'App\Entity'
-        alias: App
+    dbal:
+        default_connection: app
+        types:
+            uuid: Ramsey\Uuid\Doctrine\UuidType
+        connections:
+            app:
+                url: '%env(resolve:DATABASE_URL)%'
+                server_version: '8.0'
+                charset: utf8mb4
+                default_table_options:
+                    charset: utf8mb4
+                    collate: utf8mb4_unicode_ci
 
+    orm:
+        auto_generate_proxy_classes: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        enable_lazy_ghost_objects: true
+        mappings:
+            # mapping des entités du namespace App\Entity
+            App\Entity:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/src/Entity'
+                prefix: 'App\Entity'

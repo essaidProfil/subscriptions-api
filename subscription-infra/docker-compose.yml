@@ -1,37 +1,77 @@
 version: "3.9"
+
 services:
-  php:
+  backend:
     build:
-      context: ../subscription-app
-      target: app
+      context: ./php-fpm
+      dockerfile: Dockerfile
     container_name: subscriptions-php
+    working_dir: /var/www/subscriptions-api/subscription-app
     environment:
       APP_ENV: dev
-      DATABASE_URL: ${DATABASE_URL:-mysql://symfony:symfony@db:3306/app?charset=utf8mb4}
-      MESSENGER_TRANSPORT_DSN: "doctrine://default?auto_setup=0"
+      DATABASE_URL: ${DATABASE_URL:-mysql://symfony:symfony@database:3306/subdb?charset=utf8mb4}
+      JWT_PASSPHRASE: ${JWT_PASSPHRASE:-changeit}
     volumes:
       - ../subscription-app:/var/www/subscriptions-api/subscription-app:delegated
-    depends_on: [db]
+      - vendor:/var/www/subscriptions-api/subscription-app/vendor
+      - composer-cache:/tmp/composer-cache
+    depends_on:
+      - database
 
   nginx:
-    build: ./nginx
+    image: nginx:1.27-alpine
     container_name: subscriptions-nginx
-    ports: ["8080:80"]
+    ports:
+      - "8080:80"
     volumes:
       - ../subscription-app:/var/www/subscriptions-api/subscription-app:ro
-    depends_on: [php]
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - backend
 
-  db:
+  database:
     image: mysql:8.0
+    container_name: subscriptions-db
+    platform: linux/x86_64
     environment:
-      MYSQL_DATABASE: app
+      MYSQL_DATABASE: subdb
       MYSQL_USER: symfony
       MYSQL_PASSWORD: symfony
       MYSQL_ROOT_PASSWORD: root
-    ports: ["3307:3306"]   # change si 3306 libre
     command: ["--default-authentication-plugin=mysql_native_password"]
+    ports:
+      - "3307:3306"
     volumes:
-      - dbdata:/var/lib/mysql
+      - ./data/database:/var/lib/mysql
+      - ./data/database:/var/log/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -psymfony || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: subscriptions-phpmyadmin
+    depends_on:
+      - database
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: database
+      PMA_USER: root
+      PMA_PASSWORD: root
+      UPLOAD_LIMIT: 2G
+      SESSION_TIMEOUT: "60000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:80/ >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
 volumes:
   dbdata: {}
+  vendor: {}
+  composer-cache: {}

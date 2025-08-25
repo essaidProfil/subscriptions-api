@@ -1,0 +1,9 @@
+services:
+    doctrine.orm.metadata.annotation_reader:
+        class: Doctrine\ORM\Mapping\Driver\AnnotationDriver
+        arguments:
+            - '@annotation_reader'
+            - [ '%kernel.project_dir%/src/Entity' ]
+
+    doctrine.orm.default_metadata_driver:
+        alias: doctrine.orm.metadata.annotation_reader
