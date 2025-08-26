@@ -43,7 +43,7 @@ services:
       - "3307:3306"
     volumes:
       - ./data/database:/var/lib/mysql
-      - ./data/database:/var/log/mysql
+
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -psymfony || exit 1"]
       interval: 10s

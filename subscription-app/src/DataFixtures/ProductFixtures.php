@@ -2,36 +2,18 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\User;
 use App\Entity\Product;
 use App\Entity\PriceOption;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-class ProductFixtures extends Fixture
+class ProductFixtures extends Fixture implements DependentFixtureInterface
 {
-    private UserPasswordHasherInterface $passwordHasher;
-
-    public function __construct(UserPasswordHasherInterface $passwordHasher)
-    {
-        $this->passwordHasher = $passwordHasher;
-    }
+    public const PREMIUM_MONTHLY_REF = 'premium-monthly';
 
     public function load(ObjectManager $manager): void
     {
-        // --- User admin ---
-        $user = new User();
-        $user->setEmail('admin@example.com');
-        $user->setFirstName('Admin');
-        $user->setLastName('User');
-
-        $hashedPassword = $this->passwordHasher->hashPassword($user, 'adminpass');
-        $user->setPassword($hashedPassword);
-
-        $manager->persist($user);
-
-        // --- Product 1 : Premium Subscription ---
         $premium = new Product();
         $premium->setName('Premium Subscription');
         $manager->persist($premium);
@@ -39,29 +21,20 @@ class ProductFixtures extends Fixture
         $premiumMonthly = new PriceOption();
         $premiumMonthly->setProduct($premium);
         $premiumMonthly->setCode('PREMIUM_MONTHLY');
-        $premiumMonthly->setAmountCents(999); // 9.99 CAD
+        $premiumMonthly->setAmountCents(999);
         $premiumMonthly->setCurrency('CAD');
         $manager->persist($premiumMonthly);
 
-        $premiumYearly = new PriceOption();
-        $premiumYearly->setProduct($premium);
-        $premiumYearly->setCode('PREMIUM_YEARLY');
-        $premiumYearly->setAmountCents(9999); // 99.99 CAD
-        $premiumYearly->setCurrency('CAD');
-        $manager->persist($premiumYearly);
-
-        // --- Product 2 : Basic Subscription ---
-        $basic = new Product();
-        $basic->setName('Basic Subscription');
-        $manager->persist($basic);
-
-        $basicMonthly = new PriceOption();
-        $basicMonthly->setProduct($basic);
-        $basicMonthly->setCode('BASIC_MONTHLY');
-        $basicMonthly->setAmountCents(499); // 4.99 CAD
-        $basicMonthly->setCurrency('CAD');
-        $manager->persist($basicMonthly);
-
         $manager->flush();
+
+        // référence pour SubscriptionFixtures
+        $this->setReference(self::PREMIUM_MONTHLY_REF, $premiumMonthly);
+    }
+
+    public function getDependencies(): array
+    {
+        return [
+            UserFixtures::class,
+        ];
     }
 }
