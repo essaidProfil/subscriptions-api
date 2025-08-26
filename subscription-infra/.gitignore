@@ -1,0 +1,2 @@
+# Ignorer la base de données MySQL montée par Docker
+data/database/
