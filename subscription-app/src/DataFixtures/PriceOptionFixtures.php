@@ -39,15 +39,15 @@ class PriceOptionFixtures extends Fixture
         $option1 = new PriceOption();
         $option1->setProduct($product1);
         $option1->setCode('PREMIUM_MONTHLY');
-        $option1->setAmountCents(999); // 9.99 EUR
-        $option1->setCurrency('EUR');
+        $option1->setAmountCents(999); // 9.99 CAD
+        $option1->setCurrency('CAD');
         $manager->persist($option1);
 
         $option2 = new PriceOption();
         $option2->setProduct($product1);
         $option2->setCode('PREMIUM_YEARLY');
-        $option2->setAmountCents(9999); // 99.99 EUR
-        $option2->setCurrency('EUR');
+        $option2->setAmountCents(9999); // 99.99 CAD
+        $option2->setCurrency('CAD');
         $manager->persist($option2);
 
         // --- Product 2 ---
@@ -58,8 +58,8 @@ class PriceOptionFixtures extends Fixture
         $option3 = new PriceOption();
         $option3->setProduct($product2);
         $option3->setCode('BASIC_MONTHLY');
-        $option3->setAmountCents(499); // 4.99 EUR
-        $option3->setCurrency('EUR');
+        $option3->setAmountCents(499); // 4.99 CAD
+        $option3->setCurrency('CAD');
         $manager->persist($option3);
 
         $manager->flush();

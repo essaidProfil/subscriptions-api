@@ -39,15 +39,15 @@ class ProductFixtures extends Fixture
         $premiumMonthly = new PriceOption();
         $premiumMonthly->setProduct($premium);
         $premiumMonthly->setCode('PREMIUM_MONTHLY');
-        $premiumMonthly->setAmountCents(999); // 9.99 EUR
-        $premiumMonthly->setCurrency('EUR');
+        $premiumMonthly->setAmountCents(999); // 9.99 CAD
+        $premiumMonthly->setCurrency('CAD');
         $manager->persist($premiumMonthly);
 
         $premiumYearly = new PriceOption();
         $premiumYearly->setProduct($premium);
         $premiumYearly->setCode('PREMIUM_YEARLY');
-        $premiumYearly->setAmountCents(9999); // 99.99 EUR
-        $premiumYearly->setCurrency('EUR');
+        $premiumYearly->setAmountCents(9999); // 99.99 CAD
+        $premiumYearly->setCurrency('CAD');
         $manager->persist($premiumYearly);
 
         // --- Product 2 : Basic Subscription ---
@@ -58,8 +58,8 @@ class ProductFixtures extends Fixture
         $basicMonthly = new PriceOption();
         $basicMonthly->setProduct($basic);
         $basicMonthly->setCode('BASIC_MONTHLY');
-        $basicMonthly->setAmountCents(499); // 4.99 EUR
-        $basicMonthly->setCurrency('EUR');
+        $basicMonthly->setAmountCents(499); // 4.99 CAD
+        $basicMonthly->setCurrency('CAD');
         $manager->persist($basicMonthly);
 
         $manager->flush();

@@ -45,8 +45,8 @@ final class ProductServiceTest extends TestCase
     {
         /** @var array<int, array{code:string, amountCents:int, currency:string}> $options */
         $options = [
-            ['code' => 'monthly', 'amountCents' => 9900,  'currency' => 'EUR'],
-            ['code' => 'yearly',  'amountCents' => 99000, 'currency' => 'EUR'],
+            ['code' => 'monthly', 'amountCents' => 9900,  'currency' => 'CAD'],
+            ['code' => 'yearly',  'amountCents' => 99000, 'currency' => 'CAD'],
         ];
 
         // 1 persist for product + 2 for options = 3

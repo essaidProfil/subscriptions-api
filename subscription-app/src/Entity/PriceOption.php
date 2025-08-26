@@ -31,7 +31,7 @@ class PriceOption
 
     #[ORM\Column(type: "string", length: 3)]
     #[Serializer\Groups(["details"])]
-    private string $currency = 'EUR';
+    private string $currency = 'CAD';
 
     public function getId(): ?int
     {

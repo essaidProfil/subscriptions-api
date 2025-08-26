@@ -8,13 +8,18 @@ api_products:
     controller: App\Controller\ProductController::list
     methods: [GET]
 
+api_products_create:
+    path: /api/product
+    controller: App\Controller\ProductController::create
+    methods: [POST]
+
 api_subscriptions_my:
     path: /api/subscriptions
     controller: App\Controller\SubscriptionController::getUserSubscription
     methods: [GET]
 
 api_subscriptions_create:
-    path: /api/subscriptions
+    path: /api/subscribe
     controller: App\Controller\SubscriptionController::create
     methods: [POST]
 

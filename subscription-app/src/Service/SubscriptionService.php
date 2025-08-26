@@ -25,19 +25,27 @@ class SubscriptionService
      */
     public function subscribe(
         User $user,
-        PriceOption $priceOption,
-        ?\DateTimeImmutable $endsAt = null,
-        bool $autoRenew = false,
-        ?string $note = null
+        PriceOption $priceOption
     ): Subscription {
+        $now = new \DateTimeImmutable();
+
         $subscription = new Subscription();
-        $subscription->setUser($user);
-        $subscription->setPriceOption($priceOption);
-        $subscription->setStartedAt(new \DateTimeImmutable());
-        $subscription->setEndsAt($endsAt);
-        $subscription->setIsCancelled(false);
-        $subscription->setAutoRenew($autoRenew);
-        $subscription->setNote($note);
+        $subscription->setUser($user)
+            ->setPriceOption($priceOption)
+            ->setStartedAt($now);
+
+        switch (strtolower($priceOption->getCode())) {
+        case 'monthly':
+            $subscription->setEndsAt($now->modify('+1 month'));
+            break;
+        case 'yearly':
+            $subscription->setEndsAt($now->modify('+1 year'));
+            break;
+        default:
+            // open-ended (lifetime)
+            $subscription->setEndsAt(null);
+            break;
+        }
 
         $this->entityManager->persist($subscription);
         $this->entityManager->flush();
