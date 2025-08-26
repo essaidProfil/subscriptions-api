@@ -6,9 +6,10 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use App\Repository\ProductRepository;
 
 #[ORM\Table(name: "product")]
-#[ORM\Entity(repositoryClass: App\Repository\ProductRepository::class)]
+#[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
 {
     #[ORM\Id]
@@ -22,8 +23,8 @@ class Product
     private string $name;
 
     #[ORM\OneToMany(
-        targetEntity: PriceOption::class,
         mappedBy: "product",
+        targetEntity: PriceOption::class,
         cascade: ["persist"],
         orphanRemoval: true
     )]

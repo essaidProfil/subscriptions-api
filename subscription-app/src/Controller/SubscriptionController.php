@@ -5,6 +5,7 @@ use App\Entity\User;
 use App\Repository\PriceOptionRepository;
 use App\Repository\SubscriptionRepository;
 use App\Service\SubscriptionService;
+use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,35 +31,61 @@ class SubscriptionController extends AbstractController
     ): JsonResponse
     {
         $subscriptions = $subscriptionRepository->findBy(['user' => $this->getUser()]);
-        $json = $serializer->serialize($subscriptions, 'json', ['groups' => ['details']]);
+        $json = $serializer->serialize(
+            $subscriptions,
+            'json',
+            SerializationContext::create()->setGroups(['details'])
+        );
         return new JsonResponse($json, 200, [], true);
     }
 
     /**
      * Create a subscription for the current user.
      *
-     * @param Request               $request
+     * @param Request $request
      * @param PriceOptionRepository $priceOptionRepository
-     * @param SubscriptionService   $subscriptionService
+     * @param SubscriptionService $subscriptionService
      * @return JsonResponse
+     * @throws \Exception
      */
     #[IsGranted('ROLE_USER')]
     public function create(
         Request $request,
-        PriceOptionRepository   $priceOptionRepository,
-        SubscriptionService     $subscriptionService
-    ): JsonResponse
-    {
+        PriceOptionRepository $priceOptionRepository,
+        SubscriptionService $subscriptionService
+    ): JsonResponse {
         $payload = $request->toArray();
+
         $priceOptionId = (int)($payload['priceOptionId'] ?? 0);
         $priceOption = $priceOptionRepository->find($priceOptionId);
+
         if (!$priceOption) {
             return $this->json(['error' => 'price option not found'], 404);
         }
+
         /** @var User $user */
         $user = $this->getUser();
-        $subscription = $subscriptionService->subscribe($user, $priceOption);
-        return $this->json(['id' => $subscription->getId()], 201);
+
+        // Subscription end date
+        $endsAt = isset($payload['endsAt'])
+            ? new \DateTimeImmutable($payload['endsAt'])
+            : null;
+
+        $autoRenew = $payload['autoRenew'] ?? false;
+        $note = $payload['note'] ?? null;
+
+        $subscription = $subscriptionService->subscribe(
+            $user,
+            $priceOption,
+            $endsAt,
+            $autoRenew,
+            $note
+        );
+
+        return $this->json([
+            'id' => $subscription->getId(),
+            'status' => 'created'
+        ], 201);
     }
 
     /**

@@ -6,9 +6,10 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use App\Repository\RoleRepository;
 
 #[ORM\Table(name: "role")]
-#[ORM\Entity(repositoryClass: App\Repository\RoleRepository::class)]
+#[ORM\Entity(repositoryClass: RoleRepository::class)]
 class Role
 {
     #[ORM\Id]

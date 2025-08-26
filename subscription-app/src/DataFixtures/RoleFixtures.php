@@ -8,13 +8,13 @@ use Doctrine\Persistence\ObjectManager;
 
 class RoleFixtures extends Fixture
 {
-    public function load(ObjectManager $om): void
+    public function load(ObjectManager $manager): void
     {
         foreach ([['ROLE_USER', 'User'], ['ROLE_ADMIN', 'Administrator']] as [$code, $name]) {
             $role = new Role();
             $role->setCode($code)->setName($name);
-            $om->persist($role);
+            $manager->persist($role);
         }
-        $om->flush();
+        $manager->flush();
     }
 }

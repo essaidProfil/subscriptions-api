@@ -4,9 +4,10 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use App\Repository\PriceOptionRepository;
 
 #[ORM\Table(name: "price_option")]
-#[ORM\Entity(repositoryClass: App\Repository\PriceOptionRepository::class)]
+#[ORM\Entity(repositoryClass: PriceOptionRepository::class)]
 class PriceOption
 {
     #[ORM\Id]

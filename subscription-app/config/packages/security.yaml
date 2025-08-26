@@ -27,7 +27,12 @@ security:
       stateless: true
       jwt: ~
 
-  access_control:
-    - { path: ^/api/auth/login, roles: PUBLIC_ACCESS }
-    - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+    docs:
+      pattern: ^/api/docs
+      stateless: true
+      security: false  # ✅ totalement public
 
+  access_control:
+      - { path: ^/api/docs, roles: PUBLIC_ACCESS }
+      - { path: ^/api/auth/login, roles: PUBLIC_ACCESS }
+      - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

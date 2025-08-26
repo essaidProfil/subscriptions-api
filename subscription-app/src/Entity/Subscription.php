@@ -4,9 +4,10 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use App\Repository\SubscriptionRepository;
 
 #[ORM\Table(name: "subscription")]
-#[ORM\Entity(repositoryClass: App\Repository\SubscriptionRepository::class)]
+#[ORM\Entity(repositoryClass: SubscriptionRepository::class)]
 class Subscription
 {
     #[ORM\Id]
@@ -36,6 +37,14 @@ class Subscription
     #[ORM\Column(type: "boolean")]
     #[Serializer\Groups(["details"])]
     private bool $isCancelled = false;
+
+    #[ORM\Column(type: "boolean", options: ["default" => false])]
+    #[Serializer\Groups(["details"])]
+    private bool $autoRenew = false;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[Serializer\Groups(["details"])]
+    private ?string $note = null;
 
     public function getId(): ?int
     {
@@ -100,6 +109,34 @@ class Subscription
     public function cancel(): self
     {
         $this->isCancelled = true;
+        return $this;
+    }
+
+    public function setIsCancelled(bool $isCancelled): self
+    {
+        $this->isCancelled = $isCancelled;
+        return $this;
+    }
+
+    public function isAutoRenew(): bool
+    {
+        return $this->autoRenew;
+    }
+
+    public function setAutoRenew(bool $autoRenew): self
+    {
+        $this->autoRenew = $autoRenew;
+        return $this;
+    }
+
+    public function getNote(): ?string
+    {
+        return $this->note;
+    }
+
+    public function setNote(?string $note): self
+    {
+        $this->note = $note;
         return $this;
     }
 }

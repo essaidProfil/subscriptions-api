@@ -23,26 +23,28 @@ class SubscriptionService
      * @param PriceOption $priceOption Selected pricing option.
      * @return Subscription The new persisted subscription.
      */
-    public function subscribe(User $user, PriceOption $priceOption): Subscription
-    {
+    public function subscribe(
+        User $user,
+        PriceOption $priceOption,
+        ?\DateTimeImmutable $endsAt = null,
+        bool $autoRenew = false,
+        ?string $note = null
+    ): Subscription {
         $subscription = new Subscription();
-        $subscription->setUser($user)
-                     ->setPriceOption($priceOption)
-                     ->setStartedAt(new \DateTimeImmutable('now'));
-
-        $code = strtolower($priceOption->getCode());
-        if ($code === 'monthly') {
-            $subscription->setEndsAt((new \DateTimeImmutable('now'))->modify('+1 month'));
-        } elseif ($code === 'yearly') {
-            $subscription->setEndsAt((new \DateTimeImmutable('now'))->modify('+1 year'));
-        } else {
-            $subscription->setEndsAt(null);
-        }
+        $subscription->setUser($user);
+        $subscription->setPriceOption($priceOption);
+        $subscription->setStartedAt(new \DateTimeImmutable());
+        $subscription->setEndsAt($endsAt);
+        $subscription->setIsCancelled(false);
+        $subscription->setAutoRenew($autoRenew);
+        $subscription->setNote($note);
 
         $this->entityManager->persist($subscription);
         $this->entityManager->flush();
+
         return $subscription;
     }
+
 
     /**
      * Cancel a subscription (remains valid until endsAt).

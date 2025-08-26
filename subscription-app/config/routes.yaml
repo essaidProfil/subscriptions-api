@@ -23,6 +23,8 @@ api_subscriptions_cancel:
     controller: App\Controller\SubscriptionController::cancel
     methods: [POST]
 
-nelmio_api_doc:
-    path: /api/docs
-    controller: nelmio_api_doc.controller.swagger_ui
+controllers:
+    resource: ../src/Controller/
+    type: attribute
+
+
